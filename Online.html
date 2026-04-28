@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Quiz App</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #4facfe, #00f2fe);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .quiz-container {
+            background: #fff;
+            padding: 20px;
+            width: 90%;
+            max-width: 400px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        }
+
+        h2 {
+            margin-bottom: 15px;
+        }
+
+        .option {
+            display: block;
+            margin: 10px 0;
+            padding: 10px;
+            background: #f1f1f1;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .option:hover {
+            background: #d6eaff;
+        }
+
+        #nextBtn {
+            margin-top: 15px;
+            padding: 10px;
+            width: 100%;
+            background: #4facfe;
+            border: none;
+            color: white;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #nextBtn:hover {
+            background: #007bff;
+        }
+
+        #timer {
+            float: right;
+            font-weight: bold;
+            color: red;
+        }
+
+        @media (max-width: 500px) {
+            .quiz-container {
+                width: 95%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <div id="timer">Time: 10</div>
+    <h2 id="question">Question</h2>
+    <div id="options"></div>
+    <button id="nextBtn">Next</button>
+</div>
+
+<script>
+    const quizData = [
+        {
+            question: "What does HTML stand for?",
+            options: [
+                "Hyper Text Markup Language",
+                "High Tech Machine Learning",
+                "Hyperlinks Text Management Language",
+                "Home Tool Markup Language"
+            ],
+            answer: 0
+        },
+        {
+            question: "Which language is used for styling web pages?",
+            options: ["HTML", "JQuery", "CSS", "XML"],
+            answer: 2
+        },
+        {
+            question: "Which is not a JavaScript Framework?",
+            options: ["Python Script", "React", "Angular", "Vue"],
+            answer: 0
+        }
+    ];
+
+    let currentQ = 0;
+    let score = 0;
+    let timeLeft = 10;
+    let timer;
+
+    function loadQuestion() {
+        clearInterval(timer);
+        timeLeft = 10;
+        document.getElementById("timer").innerText = "Time: " + timeLeft;
+
+        timer = setInterval(() => {
+            timeLeft--;
+            document.getElementById("timer").innerText = "Time: " + timeLeft;
+            if (timeLeft === 0) {
+                nextQuestion();
+            }
+        }, 1000);
+
+        const q = quizData[currentQ];
+        document.getElementById("question").innerText = q.question;
+
+        const optionsDiv = document.getElementById("options");
+        optionsDiv.innerHTML = "";
+
+        q.options.forEach((opt, index) => {
+            const div = document.createElement("div");
+            div.classList.add("option");
+            div.innerText = opt;
+
+            div.onclick = () => selectAnswer(index);
+
+            optionsDiv.appendChild(div);
+        });
+    }
+
+    function selectAnswer(index) {
+        if (index === quizData[currentQ].answer) {
+            score++;
+        }
+        nextQuestion();
+    }
+
+    function nextQuestion() {
+        currentQ++;
+        if (currentQ < quizData.length) {
+            loadQuestion();
+        } else {
+            showResult();
+        }
+    }
+
+    function showResult() {
+        clearInterval(timer);
+        document.querySelector(".quiz-container").innerHTML =
+            `<h2>Your Score: ${score}/${quizData.length}</h2>`;
+    }
+
+    document.getElementById("nextBtn").addEventListener("click", nextQuestion);
+
+    loadQuestion();
+</script>
+
+</body>
+</html>
